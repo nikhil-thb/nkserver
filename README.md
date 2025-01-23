@@ -38,7 +38,7 @@ The installation script creates a globally accessible command nkserver to easily
 
 First, clone the nkserver repository from GitHub:
 
-    git clone https://github.com/nikhil-thb/nkserver.git
+    # git clone https://github.com/nikhil-thb/nkserver.git
 
 This command will create a directory named nkserver in your current directory.
 2. Change to the nkserver Directory
