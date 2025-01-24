@@ -1,115 +1,113 @@
-# nkserver: A Simple Lightweight HTTP Server
+# nkserver - Lightweight Web Server
+nkserver is a lightweight web server that can serve static content based on domain-to-directory mappings. You can easily map your domain to a specific directory on your server and use SSL certificates for secure access.
 
-nkserver is a lightweight and simple HTTP server built using Python. It serves static content from a user-defined directory and provides a quick and easy way to set up a web server for local development or testing purposes.
-Features:
+# Table of Contents
+Installation
+Usage
+Configuration
+SSL Configuration
+Uninstallation
+Scripts and Automation
+Contributing
+Installation
+To install nkserver on your system, follow these steps:
 
-Lightweight: Written in Python, nkserver is minimalistic and doesn't require additional configuration or heavy dependencies.
-Customizable Server Directory: The server serves files from a user-defined folder, which can easily be changed to fit project requirements.
-Responsive and Creative Index Page: By default, it serves a creative index.html page with effects such as blinking and fading text, and includes information about the server's status (such as the port number it's running on).
-Port Configuration: The server runs on a configurable port (default is 8000) and serves content over HTTP.
-Systemd Integration: The server can run as a background service on Linux using systemd, ensuring it starts on boot and remains running.
-Easy Installation: The server is packaged with an easy-to-use installation script that sets everything up for you automatically.
-User-Friendly Command: A globally accessible command (nkserver) allows you to start and manage the server easily.
-
-# How It Works:
-
-Installation:
-Run a simple shell script to install all necessary dependencies (Python 3 and pip).
-The script prompts you to enter your domain (or use localhost if you don’t have one).
-It sets up the server directory, installs the Python script, and configures a systemd service to manage the server in the background.
-
-Serving Content:
-By default, the server looks for files in the /home/<user>/nkserver directory.
-The server can be customized to serve additional static content like HTML, CSS, JavaScript, and images.
-If no file is found, the server responds with a simple 404 Not Found page.
-
-Creative Index Page:
-A default index.html page is created during installation with creative effects like text blinking and fading. The page displays a welcome message, the port number the server is running on, and the domain or localhost for local access.
-
-Accessing the Server:
-Once the installation is complete, the server can be accessed at: http://<domain>:8000.
-You can copy your own project files into the nkserver folder to make them publicly available.
-
-Global Command:
-The installation script creates a globally accessible command nkserver to easily manage the server.
-
-# Steps to Clone and Run nkserver from GitHub
-1. Clone the Repository
-
-First, clone the nkserver repository from GitHub:
+# Prerequisites:
+Ubuntu/Debian-based systems (or any Linux system with apt).
+Python 3 installed on your system.
+Certbot (for SSL support).
+A public domain name (e.g., yourdomain.com) pointing to your server's IP address.
+Steps:
+Clone the repository:
 
     git clone https://github.com/nikhil-thb/nkserver.git
-
-This command will create a directory named nkserver in your current directory.
-2. Change to the nkserver Directory
-
-After cloning, navigate into the nkserver directory:
-
     cd nkserver
+Make the install script executable:
 
-3. Install Dependencies
+    chmod +x install.sh
+Run the install script:
 
-Ensure that Python 3 and pip are installed on your system. You can install them using the following commands:
+    sudo ./install.sh
+    
+During installation, the script will prompt you to enter your public IP address or domain name. If you have a public IP (or domain), enter it when asked.
 
-    sudo apt update
-    sudo apt install -y python3 python3-pip
+Example prompt:
 
-4. Run the Installation Script
+Enter the public IP or domain of your server (e.g., yourdomain.com or 192.168.1.100):
+After this, the script will configure nkserver for your public IP or domain.
 
-In the nkserver directory, you should now see the install_nkserver.sh script. Make the script executable and run it:
+Start the server: The installation script will automatically start the nkserver service using systemd.
 
-    chmod +x install_nkserver.sh
-    ./install_nkserver.sh
+Usage
+After installing nkserver, you can access it using your domain (e.g., https://yourdomain.com/) or IP address (e.g., https://<Your-IP-Address>/).
 
-This script will:
+Add New Domains
+To add a new domain to nkserver, run the following script:
 
-Install necessary dependencies (like Python and required packages).
-Ask for your domain name (or default to localhost if none is provided).
-Set up the server directory, configuration files, and create a systemd service to run the server automatically in the background.
+    /etc/nkserver/add-domain.sh
+    
+This will prompt you for a domain name and create the necessary static directory, then configure SSL using Let's Encrypt.
 
-5. Follow the Installation Prompts
+Once the domain is added and SSL configured, you can access the content at:
 
-During the installation, the script will:
+    https://yourdomain.com/
+Default Configuration
+The default configuration file will serve content for localhost. You can add more domains through the provided script. Once added, nkserver will serve the corresponding static content.
 
-Prompt you to enter a domain name (or use localhost if you don't have one).
-Set up the server directory (/home/<your-username>/nkserver), configure nkserver.py and index.html, and create a systemd service to keep the server running.
+Example Domain Addition:
+When running the add-domain.sh script:
 
-6. Start the nkserver Service
+    Enter the domain name (e.g., example.com): example.com
+This will create a folder at /var/www/nkserver/example.com/ and set up SSL for the domain using Let's Encrypt.
 
-Once the installation is complete, the nkserver service will start automatically. You can verify that the service is running by checking the service status:
+Configuration
+The domain-to-folder mappings are stored in /etc/nkserver/nkserver.conf. The configuration file will map domain names to static folders.
 
-    sudo systemctl status nkserver
+Default configuration:
 
-If you need to manually start or stop the server:
+# Domain-to-static-folder mappings
+localhost = /var/www/nkserver/localhost
+yourdomain.com = /var/www/nkserver/yourdomain
+This file is automatically updated when you add new domains via the add-domain.sh script.
 
-# Start the nkserver service
-    sudo systemctl start nkserver
+SSL Configuration
+nkserver supports SSL using Let's Encrypt. The add-domain.sh script automatically handles SSL configuration for each domain.
 
-# Stop the nkserver service
-    sudo systemctl stop nkserver
+Automatic SSL Setup
+When you add a new domain, nkserver will use Certbot to request an SSL certificate for your domain. The certificate is stored in /etc/letsencrypt/live/<domain>/.
 
-7. Access the Server
+After SSL is configured, you can access your domain securely using HTTPS:
 
-Once the service is running, you can access your server through a web browser:
+    https://yourdomain.com/
+Make sure that your domain points to your public IP, and that port 80 and 443 are open on your server for HTTP and HTTPS traffic.
 
-If you entered localhost as the domain during installation, the server will be available at:
+Uninstallation
+To uninstall nkserver, you can use the provided uninstall.sh script:
 
-    http://localhost:8000
+Run the uninstall script:
 
-If you provided a custom domain (e.g., example.com), access it via:
+    sudo /etc/nkserver/uninstall.sh
+This will stop and disable the nkserver service, remove the files, and clean up the configuration.
 
-    http://example.com:8000
+Scripts and Automation
+    add-domain.sh
+This script adds new domains to nkserver, creates static directories, and configures SSL certificates. It automates domain setup, including certificate retrieval from Let's Encrypt.
 
-8. Copy Your Project Files to the nkserver Folder
+uninstall.sh
+This script uninstalls nkserver, removes the web server files, and stops the service.
 
-The server will serve files from the directory you specified during installation (default is /home/your-username/nkserver). You can copy your project files (e.g., index.html, CSS, JS files) into that directory to serve them.
+Installation Script (install.sh)
+This script automates the installation of nkserver, including dependencies, directories, and configurations. It also prompts for the public IP or domain name to configure the server properly.
 
-    cp -r /path/to/your/project/* /home/your-username/nkserver/
+Contributing
+Contributions are welcome! Feel free to submit issues or pull requests to improve the nkserver web server.
 
-9. Run nkserver Manually (Optional)
+License
+nkserver is open-source software released under the MIT License.
 
-If you want to run nkserver manually without using systemd, you can do so by running the command (after the installation script sets it up):
+Final Thoughts
+With nkserver, you can easily serve static content for multiple domains, manage SSL certificates automatically, and run your web server both locally and on public servers.
 
-    nkserver
+By following the above steps, you should be able to configure and use nkserver to serve content via your domain (e.g., https://yourdomain.com).
 
-This will start the server on port 8000 by default.
+Let me know if you need further clarification!
